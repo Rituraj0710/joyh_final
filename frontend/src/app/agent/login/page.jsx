@@ -26,7 +26,7 @@ const AgentLogin = () => {
       setServerSuccessMessage('');
       
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4001'}/api/auth/agent/login`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4001'}/api/otp-auth/agent/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

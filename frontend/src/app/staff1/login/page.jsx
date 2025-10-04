@@ -26,8 +26,16 @@ export default function Staff1LoginPage() {
         
         if (userRole === 'admin') {
           router.push('/admin/dashboard');
-        } else if (['staff1', 'staff2', 'staff3', 'staff4', 'staff5'].includes(userRole)) {
-          router.push('/staff1/dashboard'); // All staff roles go to staff1 dashboard
+        } else if (userRole === 'staff1') {
+          router.push('/staff1/dashboard');
+        } else if (userRole === 'staff2') {
+          router.push('/staff2/dashboard');
+        } else if (userRole === 'staff3') {
+          router.push('/staff3/dashboard');
+        } else if (userRole === 'staff4') {
+          router.push('/staff4/dashboard');
+        } else if (userRole === 'staff5') {
+          router.push('/staff5/dashboard');
         } else {
           setError('Access denied. Staff or Admin access required.');
         }

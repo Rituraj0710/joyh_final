@@ -70,7 +70,7 @@ export default function AgentRegisterPage() {
     setError("");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4001'}/api/agent/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4001'}/api/otp-auth/agent/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

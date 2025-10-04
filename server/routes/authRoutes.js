@@ -60,12 +60,12 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Check if user has admin or staff role
-    const allowedRoles = ['admin', 'staff1', 'staff2', 'staff3', 'staff4', 'staff5'];
+    // Check if user has admin, staff, or user role
+    const allowedRoles = ['admin', 'staff1', 'staff2', 'staff3', 'staff4', 'staff5', 'user1', 'user2'];
     if (!allowedRoles.includes(user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied. Admin or staff access required.'
+        message: 'Access denied. Valid user access required.'
       });
     }
 

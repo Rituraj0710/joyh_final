@@ -268,13 +268,14 @@ class OtpAuthController {
       }
 
       // Generate JWT tokens
+      const JWT_SECRET = process.env.JWT_ACCESS_TOKEN_SECRECT_KEY || process.env.JWT_SECRET || 'your-super-secret-jwt-key-for-document-management-system-2024';
       const token = jwt.sign(
         { 
           userId: user._id, 
           email: user.email, 
           role: user.role 
         },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: '24h' }
       );
 
@@ -350,6 +351,7 @@ class OtpAuthController {
       await user.save();
 
       // Generate JWT token
+      const JWT_SECRET = process.env.JWT_ACCESS_TOKEN_SECRECT_KEY || process.env.JWT_SECRET || 'your-super-secret-jwt-key-for-document-management-system-2024';
       const token = jwt.sign(
         { 
           id: user._id, 
@@ -357,7 +359,7 @@ class OtpAuthController {
           role: user.role, // Use the role from database, not userType
           name: user.name 
         },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
         { expiresIn: '24h' }
       );
 

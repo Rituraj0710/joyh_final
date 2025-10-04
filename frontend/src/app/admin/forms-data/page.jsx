@@ -52,9 +52,9 @@ export default function AdminFormsDataPage() {
 
       const response = await adminFetch(`/api/forms/admin/forms?${queryParams}`);
       
-      if (response.status === "success") {
-        setForms(response.forms);
-        setPagination(response.pagination);
+      if (response.success) {
+        setForms(response.data.forms);
+        setPagination(response.data.pagination);
       } else {
         setError(response.message || "Failed to load forms");
       }
@@ -69,8 +69,8 @@ export default function AdminFormsDataPage() {
   const loadStaffList = async () => {
     try {
       const response = await adminFetch('/api/admin/staff');
-      if (response.status === "success") {
-        setStaffList(response.staff.filter(staff => staff.isActive));
+      if (response.success) {
+        setStaffList(response.data.staff.filter(staff => staff.isActive));
       }
     } catch (err) {
       console.error('Error loading staff list:', err);
@@ -98,7 +98,7 @@ export default function AdminFormsDataPage() {
         body: JSON.stringify({ staffId: selectedStaff })
       });
 
-      if (response.status === "success") {
+      if (response.success) {
         alert('Form assigned to staff successfully!');
         setShowAssignModal(false);
         setSelectedForm(null);
@@ -122,7 +122,7 @@ export default function AdminFormsDataPage() {
         body: JSON.stringify(approvalData)
       });
 
-      if (response.status === "success") {
+      if (response.success) {
         alert(approvalData.approved ? 'Form approved successfully!' : 'Form rejected successfully!');
         setShowApprovalModal(false);
         setSelectedForm(null);
@@ -218,6 +218,13 @@ export default function AdminFormsDataPage() {
             <div className="text-sm text-gray-500">
               Total: {pagination.total} forms
             </div>
+            <button
+              onClick={loadForms}
+              disabled={loading}
+              className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+            >
+              {loading ? 'Refreshing...' : 'Refresh'}
+            </button>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setViewMode("grid")}

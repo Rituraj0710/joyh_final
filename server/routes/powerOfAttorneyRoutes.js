@@ -6,6 +6,7 @@ import passport from "passport";
 import accessTokenAutoRefresh from "../middlewares/accessTokenAutoRefresh.js";
 import setAuthHeader from "../middlewares/setAuthHeader.js";
 import PowerOfAttorneyController from "../controllers/powerOfAttorneyController.js";
+import { syncToFormsData } from "../middlewares/formSyncMiddleware.js";
 
 const router = express.Router();
 
@@ -103,7 +104,7 @@ router.use(accessTokenAutoRefresh);
 router.use(setAuthHeader);
 
 // Routes
-router.post("/", upload.fields(uploadFields), PowerOfAttorneyController.create);
+router.post("/", syncToFormsData, upload.fields(uploadFields), PowerOfAttorneyController.create);
 router.get("/", PowerOfAttorneyController.getAll);
 router.get("/stats", PowerOfAttorneyController.getStats);
 router.get("/user", PowerOfAttorneyController.getUserPowerOfAttorneys);

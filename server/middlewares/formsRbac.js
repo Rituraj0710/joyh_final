@@ -8,7 +8,7 @@ export const canAccessFormsData = async (req, res, next) => {
     
     if (!user) {
       return res.status(401).json({
-        status: 'failed',
+        success: false,
         message: 'Authentication required'
       });
     }
@@ -41,7 +41,7 @@ export const canAccessFormsData = async (req, res, next) => {
         canReject: false,
         canVerify: true,
         canEditAssigned: true,
-        allowedServiceTypes: ['property_mortgage', 'property_lease']
+        allowedServiceTypes: ['property_registration', 'property_sale', 'property_transfer', 'will_deed', 'trust_deed', 'property_mortgage', 'property_lease']
       },
       'staff3': {
         canViewAll: false,
@@ -51,35 +51,35 @@ export const canAccessFormsData = async (req, res, next) => {
         canReject: false,
         canVerify: true,
         canEditAssigned: true,
-        allowedServiceTypes: ['property_sale', 'property_gift']
+        allowedServiceTypes: ['property_registration', 'property_sale', 'property_transfer', 'will_deed', 'trust_deed', 'property_mortgage', 'property_lease', 'property_gift']
       },
       'staff4': {
-        canViewAll: false,
-        canEditAll: false,
+        canViewAll: true,
+        canEditAll: true,
         canAssign: false,
         canApprove: true,
         canReject: true,
         canVerify: true,
         canEditAssigned: true,
-        allowedServiceTypes: ['property_inheritance', 'property_partition']
+        allowedServiceTypes: ['property_registration', 'property_sale', 'property_transfer', 'will_deed', 'trust_deed', 'property_mortgage', 'property_lease', 'property_gift', 'property_inheritance', 'property_partition']
       },
       'staff5': {
-        canViewAll: false,
+        canViewAll: true,
         canEditAll: false,
         canAssign: false,
         canApprove: true,
         canReject: true,
         canVerify: true,
-        canEditAssigned: true,
+        canEditAssigned: false,
         canLock: true,
-        allowedServiceTypes: ['property_survey', 'property_valuation']
+        allowedServiceTypes: ['property_registration', 'property_sale', 'property_transfer', 'will_deed', 'trust_deed', 'property_mortgage', 'property_lease', 'property_gift', 'property_inheritance', 'property_partition', 'property_survey', 'property_valuation']
       }
     };
 
     const userAccess = roleAccess[user.role];
     if (!userAccess) {
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Invalid user role'
       });
     }
@@ -90,7 +90,7 @@ export const canAccessFormsData = async (req, res, next) => {
   } catch (error) {
     console.error('Forms RBAC middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -105,7 +105,7 @@ export const canViewForm = async (req, res, next) => {
 
     if (!formId) {
       return res.status(400).json({
-        status: 'failed',
+        success: false,
         message: 'Form ID is required'
       });
     }
@@ -113,7 +113,7 @@ export const canViewForm = async (req, res, next) => {
     const form = await FormsData.findById(formId);
     if (!form) {
       return res.status(404).json({
-        status: 'failed',
+        success: false,
         message: 'Form not found'
       });
     }
@@ -153,7 +153,7 @@ export const canViewForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot view this form.'
       });
     }
@@ -164,7 +164,7 @@ export const canViewForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form view middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -179,7 +179,7 @@ export const canEditForm = async (req, res, next) => {
 
     if (!form) {
       return res.status(400).json({
-        status: 'failed',
+        success: false,
         message: 'Form not found in request'
       });
     }
@@ -226,7 +226,7 @@ export const canEditForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot edit this form.'
       });
     }
@@ -235,7 +235,7 @@ export const canEditForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form edit middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -250,7 +250,7 @@ export const canVerifyForm = async (req, res, next) => {
 
     if (!form) {
       return res.status(400).json({
-        status: 'failed',
+        success: false,
         message: 'Form not found in request'
       });
     }
@@ -298,7 +298,7 @@ export const canVerifyForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot verify this form.'
       });
     }
@@ -307,7 +307,7 @@ export const canVerifyForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form verify middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -322,7 +322,7 @@ export const canApproveForm = async (req, res, next) => {
 
     if (!form) {
       return res.status(400).json({
-        status: 'failed',
+        success: false,
         message: 'Form not found in request'
       });
     }
@@ -366,7 +366,7 @@ export const canApproveForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot approve this form.'
       });
     }
@@ -375,7 +375,7 @@ export const canApproveForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form approve middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -405,7 +405,7 @@ export const canAssignForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot assign forms.'
       });
     }
@@ -414,7 +414,7 @@ export const canAssignForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form assign middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -446,7 +446,7 @@ export const filterFormsByRole = (req, res, next) => {
   } catch (error) {
     console.error('Form filter middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }
@@ -476,7 +476,7 @@ export const canLockForm = async (req, res, next) => {
       });
 
       return res.status(403).json({
-        status: 'failed',
+        success: false,
         message: 'Access denied. You cannot lock forms.'
       });
     }
@@ -485,7 +485,7 @@ export const canLockForm = async (req, res, next) => {
   } catch (error) {
     console.error('Form lock middleware error:', error);
     res.status(500).json({
-      status: 'failed',
+      success: false,
       message: 'Internal server error'
     });
   }

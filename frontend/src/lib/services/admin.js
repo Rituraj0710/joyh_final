@@ -31,12 +31,12 @@ export const adminFetch = async (path, options = {}) => {
   console.log('🔍 Response status:', res.status);
   console.log('🔍 Response data:', data);
   
-  if (!res.ok || (data && data.status && data.status !== 'success')){
+  if (!res.ok || (data && data.success === false)){
     const message = data?.message || `Request failed: ${res.status}`;
     console.error('❌ AdminFetch Error:', {
       status: res.status,
       ok: res.ok,
-      dataStatus: data?.status,
+      dataSuccess: data?.success,
       message
     });
     const error = new Error(message);

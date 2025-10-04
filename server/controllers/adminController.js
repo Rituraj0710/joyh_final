@@ -281,15 +281,15 @@ class AdminController {
         .sort({ createdAt: -1 });
 
       res.status(200).json({
-        status: "success",
+        success: true,
         message: "Staff list retrieved successfully",
-        staff
+        data: { staff }
       });
 
     } catch (error) {
       console.error('Get staff error:', error);
       res.status(500).json({
-        status: "failed",
+        success: false,
         message: "Unable to retrieve staff list, please try again later"
       });
     }

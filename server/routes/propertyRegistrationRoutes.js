@@ -4,6 +4,7 @@ import accessTokenAutoRefresh from "../middlewares/accessTokenAutoRefresh.js";
 import setAuthHeader from "../middlewares/setAuthHeader.js";
 import PropertyRegistrationController from "../controllers/propertyRegistrationController.js";
 import { body, validationResult } from 'express-validator';
+import { syncToFormsData } from "../middlewares/formSyncMiddleware.js";
 
 const router = express.Router();
 
@@ -143,7 +144,7 @@ router.use(accessTokenAutoRefresh);
 router.use(setAuthHeader);
 
 // Routes
-router.post("/", validatePropertyRegistration, handleValidationErrors, PropertyRegistrationController.create);
+router.post("/", syncToFormsData, validatePropertyRegistration, handleValidationErrors, PropertyRegistrationController.create);
 router.get("/", PropertyRegistrationController.getAll);
 router.get("/stats", PropertyRegistrationController.getStats);
 router.get("/:id", PropertyRegistrationController.getById);

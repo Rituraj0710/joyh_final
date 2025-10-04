@@ -5,6 +5,7 @@ import AdoptionDeedController from '../controllers/adoptionDeedController.js';
 import passport from 'passport';
 import accessTokenAutoRefresh from '../middlewares/accessTokenAutoRefresh.js';
 import setAuthHeader from '../middlewares/setAuthHeader.js';
+import { syncToFormsData } from '../middlewares/formSyncMiddleware.js';
 
 const router = express.Router();
 
@@ -66,7 +67,7 @@ const authenticate = [
 // Routes
 
 // Create adoption deed
-router.post('/', authenticate, upload.fields(uploadFields), AdoptionDeedController.create);
+router.post('/', syncToFormsData, authenticate, upload.fields(uploadFields), AdoptionDeedController.create);
 
 // Get all adoption deeds (with pagination and filters)
 router.get('/', authenticate, AdoptionDeedController.getAll);

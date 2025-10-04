@@ -6,6 +6,7 @@ import passport from "passport";
 import accessTokenAutoRefresh from "../middlewares/accessTokenAutoRefresh.js";
 import setAuthHeader from "../middlewares/setAuthHeader.js";
 import TrustDeedController from "../controllers/trustDeedController.js";
+import { syncToFormsData } from "../middlewares/formSyncMiddleware.js";
 
 const router = express.Router();
 
@@ -86,7 +87,7 @@ router.use(accessTokenAutoRefresh);
 router.use(setAuthHeader);
 
 // Routes
-router.post("/", upload.fields(uploadFields), TrustDeedController.create);
+router.post("/", syncToFormsData, upload.fields(uploadFields), TrustDeedController.create);
 router.get("/", TrustDeedController.getAll);
 router.get("/stats", TrustDeedController.getStats);
 router.get("/:id", TrustDeedController.getById);

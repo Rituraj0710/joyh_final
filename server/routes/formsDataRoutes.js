@@ -40,10 +40,6 @@ router.get('/stats',
   FormsDataController.getFormStats
 );
 
-router.get('/:id', 
-  FormsDataController.getFormById
-);
-
 // Admin/Staff routes - full CRUD access with role-based filtering
 router.get('/admin/forms', 
   authorize(['admin', 'staff1', 'staff2', 'staff3', 'staff4', 'staff5']),
@@ -56,7 +52,7 @@ router.get('/:id',
   FormsDataController.getFormById
 );
 
-router.put('/admin/forms/:id', 
+router.put('/:id', 
   authorize(['admin', 'staff1', 'staff2', 'staff3', 'staff4', 'staff5']),
   canViewForm,
   canEditForm,
@@ -64,7 +60,7 @@ router.put('/admin/forms/:id',
   FormsDataController.updateForm
 );
 
-router.delete('/admin/forms/:id', 
+router.delete('/:id', 
   authorize(['admin']),
   canViewForm,
   FormsDataController.deleteForm

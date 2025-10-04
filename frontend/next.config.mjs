@@ -11,7 +11,9 @@ const nextConfig = {
   publicRuntimeConfig: {
     apiBase: process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4001',
   },
-  webpack: (config, { isServer }) => {
+  // Fix for chunk loading issues
+  // output: 'standalone', // Commented out as it causes routing issues in development
+  webpack: (config, { isServer, dev }) => {
     // Fix for webpack chunk loading issues
     if (!isServer) {
       config.resolve.fallback = {
@@ -21,7 +23,15 @@ const nextConfig = {
         tls: false,
       };
     }
-  return config;
+    
+    // Fix for "self is not defined" error
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+      };
+    }
+    
+    return config;
   },
 };
 

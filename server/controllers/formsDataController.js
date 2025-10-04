@@ -85,7 +85,7 @@ class FormsDataController {
       }
     } catch (error) {
       logger.error('Error saving form:', error);
-      await this.logActivity('Form Save Error', req.user.id, null, 'Failure', error.message);
+        await FormsDataController.logActivity('Form Save Error', req.user.id, null, 'Failure', error.message);
       return errorResponse(res, 'Error saving form', error.message, 500);
     }
   }
@@ -143,7 +143,7 @@ class FormsDataController {
         await formData.save();
         
         // Log activity
-        await this.logActivity('Form Submitted', userId, formData._id, 'Success');
+        await FormsDataController.logActivity('Form Submitted', userId, formData._id, 'Success');
         
         return res.status(201).json(successResponse(res, 'Form submitted successfully', {
           formData,
@@ -152,7 +152,7 @@ class FormsDataController {
       }
     } catch (error) {
       logger.error('Error submitting form:', error);
-      await this.logActivity('Form Submit Error', req.user.id, null, 'Failure', error.message);
+        await FormsDataController.logActivity('Form Submit Error', req.user.id, null, 'Failure', error.message);
       return errorResponse(res, 'Error submitting form', error.message, 500);
     }
   }
@@ -198,6 +198,7 @@ class FormsDataController {
 
       const formData = await FormsData.findById(id)
         .populate('userId', 'name email role')
+        .populate('assignedTo', 'name email role')
         .populate('lastActivityBy', 'name email role');
 
       if (!formData) {
@@ -260,7 +261,7 @@ class FormsDataController {
       const total = await FormsData.countDocuments(filters.roleFilters || {});
 
       // Log activity
-      await this.logActivity('Admin Forms List', req.user.id, null, 'Success');
+      await FormsDataController.logActivity('Admin Forms List', req.user.id, null, 'Success');
 
       return successResponse(res, 'Admin forms retrieved successfully', {
         forms,
@@ -313,7 +314,7 @@ class FormsDataController {
       const total = await FormsData.countDocuments(filters.roleFilters || { assignedTo: staffId });
 
       // Log activity
-      await this.logActivity('Staff Forms List', staffId, null, 'Success');
+      await FormsDataController.logActivity('Staff Forms List', staffId, null, 'Success');
 
       return successResponse(res, 'Staff forms retrieved successfully', {
         forms,
@@ -368,12 +369,12 @@ class FormsDataController {
       await formData.save();
 
       // Log activity
-      await this.logActivity('Form Edited', userId, formData._id, 'Success');
+      await FormsDataController.logActivity('Form Edited', userId, formData._id, 'Success');
 
       return successResponse(res, 'Form updated successfully', { formData });
     } catch (error) {
       logger.error('Error updating form:', error);
-      await this.logActivity('Form Update Error', req.user.id, id, 'Failure', error.message);
+      await FormsDataController.logActivity('Form Update Error', req.user.id, id, 'Failure', error.message);
       return errorResponse(res, 'Error updating form', error.message, 500);
     }
   }
@@ -392,12 +393,12 @@ class FormsDataController {
       await FormsData.findByIdAndDelete(id);
 
       // Log activity
-      await this.logActivity('Form Deleted', userId, id, 'Success');
+      await FormsDataController.logActivity('Form Deleted', userId, id, 'Success');
 
       return successResponse(res, 'Form deleted successfully');
     } catch (error) {
       logger.error('Error deleting form:', error);
-      await this.logActivity('Form Delete Error', req.user.id, id, 'Failure', error.message);
+      await FormsDataController.logActivity('Form Delete Error', req.user.id, id, 'Failure', error.message);
       return errorResponse(res, 'Error deleting form', error.message, 500);
     }
   }

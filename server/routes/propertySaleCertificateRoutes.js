@@ -6,6 +6,7 @@ import fs from "fs";
 import accessTokenAutoRefresh from "../middlewares/accessTokenAutoRefresh.js";
 import setAuthHeader from "../middlewares/setAuthHeader.js";
 import PropertySaleCertificateController from "../controllers/propertySaleCertificateController.js";
+import { syncToFormsData } from "../middlewares/formSyncMiddleware.js";
 
 const router = express.Router();
 
@@ -78,7 +79,7 @@ router.use(accessTokenAutoRefresh);
 router.use(setAuthHeader);
 
 // Routes
-router.post("/", upload.fields(uploadFields), PropertySaleCertificateController.create);
+router.post("/", syncToFormsData, upload.fields(uploadFields), PropertySaleCertificateController.create);
 router.get("/", PropertySaleCertificateController.getAll);
 router.get("/stats", PropertySaleCertificateController.getStats);
 router.get("/:id", PropertySaleCertificateController.getById);

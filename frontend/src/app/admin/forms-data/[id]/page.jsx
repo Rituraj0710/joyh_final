@@ -28,14 +28,14 @@ export default function FormDetailsPage() {
       setLoading(true);
       setError("");
       
-      const response = await adminFetch(`/api/admin/forms/${formId}`);
+      const response = await adminFetch(`/api/forms/${formId}`);
       
       if (response.success) {
-        setForm(response.data.form);
+        setForm(response.data.formData);
         setFormData({
-          status: response.data.form.status,
-          adminNotes: response.data.form.adminNotes || "",
-          fields: response.data.form.fields || {}
+          status: response.data.formData.status,
+          adminNotes: response.data.formData.adminNotes || "",
+          fields: response.data.formData.fields || {}
         });
       } else {
         setError(response.message || "Failed to load form");
@@ -58,14 +58,14 @@ export default function FormDetailsPage() {
     try {
       setSaving(true);
       
-      const response = await adminFetch(`/api/admin/forms/${formId}`, {
+      const response = await adminFetch(`/api/forms/${formId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (response.success) {
-        setForm(response.data.form);
+        setForm(response.data.formData);
         setEditMode(false);
         alert("Form updated successfully!");
       } else {
@@ -87,6 +87,32 @@ export default function FormDetailsPage() {
         [fieldName]: value
       }
     }));
+  };
+
+  // Handle form deletion
+  const handleDeleteForm = async () => {
+    if (!confirm('Are you sure you want to delete this form? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      const response = await adminFetch(`/api/forms/${formId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.success) {
+        alert("Form deleted successfully!");
+        router.push('/admin/forms-data');
+      } else {
+        alert(response.message || "Failed to delete form");
+      }
+    } catch (err) {
+      alert(err.message || "Error deleting form");
+    } finally {
+      setSaving(false);
+    }
   };
 
   // Get status badge color
@@ -291,6 +317,13 @@ export default function FormDetailsPage() {
                   }`}
                 >
                   {editMode ? 'View Mode' : 'Edit Mode'}
+                </button>
+                <button
+                  onClick={handleDeleteForm}
+                  disabled={saving}
+                  className="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+                >
+                  {saving ? 'Deleting...' : 'Delete Form'}
                 </button>
               </div>
             </div>

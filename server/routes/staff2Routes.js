@@ -1,59 +1,26 @@
-import express from "express";
-import { authorizeRoles } from "../middlewares/authorizeRoles.js";
+import express from 'express';
+import Staff2Controller from '../controllers/staff2Controller.js';
+import { authenticateToken } from '../middlewares/roleBasedAuth.js';
+import { authorizeRoles } from '../middlewares/authorizeRoles.js';
+import { authLimiter } from '../config/rateLimits.js';
 
 const router = express.Router();
 
-// Staff 2 Routes - Only accessible by staff_2 and admin
-router.use(authorizeRoles('staff_2', 'admin'));
+// Apply authentication and role authorization to all routes
+router.use(authenticateToken);
+router.use(authorizeRoles('staff2', 'admin'));
 
-// Staff 2 Dashboard
-router.get("/dashboard", (req, res) => {
-  res.json({
-    status: 'success',
-    message: 'Staff 2 Dashboard accessed successfully',
-    data: {
-      user: req.user,
-      department: 'Staff 2 Department',
-      permissions: ['manage_employees', 'view_payroll', 'manage_benefits']
-    }
-  });
-});
+// Dashboard routes
+router.get('/dashboard-stats', authLimiter, Staff2Controller.getDashboardStats);
 
-// Employee Management
-router.get("/employees", (req, res) => {
-  res.json({
-    status: 'success',
-    message: 'Employee list retrieved',
-    data: {
-      employees: [
-        { id: 1, name: 'John Doe', position: 'Developer', department: 'IT' },
-        { id: 2, name: 'Jane Smith', position: 'Designer', department: 'Creative' }
-      ]
-    }
-  });
-});
+// Forms routes
+router.get('/forms', authLimiter, Staff2Controller.getForms);
+router.get('/forms/:id', authLimiter, Staff2Controller.getFormById);
+router.put('/forms/:id/verify', authLimiter, Staff2Controller.verifyForm);
+router.put('/forms/:id/update', authLimiter, Staff2Controller.updateForm);
 
-// Add Employee
-router.post("/employees", (req, res) => {
-  res.json({
-    status: 'success',
-    message: 'Employee added successfully',
-    data: req.body
-  });
-});
-
-// Payroll Management
-router.get("/payroll", (req, res) => {
-  res.json({
-    status: 'success',
-    message: 'Payroll data retrieved',
-    data: {
-      payroll: [
-        { employee: 'John Doe', salary: 50000, department: 'IT' },
-        { employee: 'Jane Smith', salary: 45000, department: 'Creative' }
-      ]
-    }
-  });
-});
+// Work report routes
+router.get('/work-data', authLimiter, Staff2Controller.getWorkData);
+router.post('/work-report', authLimiter, Staff2Controller.submitWorkReport);
 
 export default router;

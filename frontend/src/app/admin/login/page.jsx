@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage(){
@@ -10,6 +10,23 @@ export default function AdminLoginPage(){
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Don't render until we're on the client side
+  if (!isClient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100">
+        <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6">
+          <div className="text-center">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -41,59 +58,75 @@ export default function AdminLoginPage(){
         throw new Error(data.message || "Login failed");
       }
       
-      // Store authentication data in localStorage for SPA auth
-      if (data.data?.token){
-        localStorage.setItem('access_token', data.data.token);
-        console.log('Token stored:', data.data.token.substring(0, 20) + '...');
-      }
-      if (data.data?.user){
-        localStorage.setItem('user_id', data.data.user.id);
-        localStorage.setItem('user_email', data.data.user.email);
-        localStorage.setItem('user_name', data.data.user.name);
-        localStorage.setItem('user_role', data.data.user.role);
-        localStorage.setItem('user_department', data.data.user.department || '');
-        localStorage.setItem('user_employeeId', data.data.user.employeeId || '');
-        console.log('User data stored:', {
-          id: data.data.user.id,
-          email: data.data.user.email,
-          name: data.data.user.name,
-          role: data.data.user.role,
-          department: data.data.user.department,
-          employeeId: data.data.user.employeeId
+      // Store authentication data in localStorage for SPA auth (only on client side)
+      if (isClient && typeof window !== 'undefined') {
+        if (data.data?.token){
+          localStorage.setItem('access_token', data.data.token);
+          console.log('Token stored:', data.data.token.substring(0, 20) + '...');
+        }
+        if (data.data?.user){
+          localStorage.setItem('user_id', data.data.user.id);
+          localStorage.setItem('user_email', data.data.user.email);
+          localStorage.setItem('user_name', data.data.user.name);
+          localStorage.setItem('user_role', data.data.user.role);
+          localStorage.setItem('user_department', data.data.user.department || '');
+          localStorage.setItem('user_employeeId', data.data.user.employeeId || '');
+          console.log('User data stored:', {
+            id: data.data.user.id,
+            email: data.data.user.email,
+            name: data.data.user.name,
+            role: data.data.user.role,
+            department: data.data.user.department,
+            employeeId: data.data.user.employeeId
+          });
+        }
+        localStorage.setItem('role', data.data?.user?.role || (tab === 'admin' ? 'admin' : 'staff1'));
+        localStorage.setItem('is_auth', 'true');
+        
+        console.log('Login successful, redirecting...');
+        console.log('Stored data:', {
+          token: localStorage.getItem('access_token'),
+          role: localStorage.getItem('role'),
+          isAuth: localStorage.getItem('is_auth')
         });
       }
-      localStorage.setItem('role', data.data?.user?.role || (tab === 'admin' ? 'admin' : 'staff1'));
-      localStorage.setItem('is_auth', 'true');
-      
-      console.log('Login successful, redirecting...');
-      console.log('Stored data:', {
-        token: localStorage.getItem('access_token'),
-        role: localStorage.getItem('role'),
-        isAuth: localStorage.getItem('is_auth')
-      });
       setSuccess(true);
       setError("");
       
       // Force a page reload to ensure all components re-initialize with new auth state
-      setTimeout(() => {
-        const userRole = data.data?.user?.role;
-        console.log('Redirecting user with role:', userRole);
-        
-        if (userRole === 'admin') {
-          console.log('Redirecting to admin dashboard...');
-          window.location.href = '/admin/dashboard';
-        } else if (userRole === 'staff1' || userRole === 'staff2' || userRole === 'staff3' || userRole === 'staff4' || userRole === 'staff5') {
-          console.log(`Redirecting to ${userRole} dashboard...`);
-          window.location.href = '/staff1/dashboard'; // All staff roles go to staff1 dashboard for now
-        } else {
-          console.log('Unknown role, redirecting based on tab...');
-          if (tab === 'admin') {
+      if (isClient && typeof window !== 'undefined') {
+        setTimeout(() => {
+          const userRole = data.data?.user?.role;
+          console.log('Redirecting user with role:', userRole);
+          
+          if (userRole === 'admin') {
+            console.log('Redirecting to admin dashboard...');
             window.location.href = '/admin/dashboard';
-          } else {
+          } else if (userRole === 'staff1') {
+            console.log('Redirecting to staff1 dashboard...');
             window.location.href = '/staff1/dashboard';
+          } else if (userRole === 'staff2') {
+            console.log('Redirecting to staff2 dashboard...');
+            window.location.href = '/staff2/dashboard';
+          } else if (userRole === 'staff3') {
+            console.log('Redirecting to staff3 dashboard...');
+            window.location.href = '/staff3/dashboard';
+          } else if (userRole === 'staff4') {
+            console.log('Redirecting to staff4 dashboard...');
+            window.location.href = '/staff4/dashboard';
+          } else if (userRole === 'staff5') {
+            console.log('Redirecting to staff5 dashboard...');
+            window.location.href = '/staff5/dashboard';
+          } else {
+            console.log('Unknown role, redirecting based on tab...');
+            if (tab === 'admin') {
+              window.location.href = '/admin/dashboard';
+            } else {
+              window.location.href = '/staff1/dashboard';
+            }
           }
-        }
-      }, 1000);
+        }, 1000);
+      }
     } catch (e){
       console.error('Login error caught:', e);
       setError(e.message || 'Login failed. Please check your credentials and try again.');
